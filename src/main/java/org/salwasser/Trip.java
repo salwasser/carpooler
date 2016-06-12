@@ -5,13 +5,15 @@ import org.salwasser.structures.LinkedFIFOQueue;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by Zac on 6/11/2016.
  */
-public class Trip {
+public class Trip implements Comparable<Trip> {
     private LinkedFIFOQueue<Location> itinerary;
     private Date startTime;
+    private Double distance = null;
 
     public Trip() {
         itinerary = new LinkedFIFOQueue<Location>();
@@ -33,15 +35,69 @@ public class Trip {
         this.startTime = startTime;
     }
 
+    public int compareTo(Trip other) {
+        return getDistance().compareTo(other.getDistance());
+    }
+
+    public Double getDistance() {
+        if (distance == null) {
+            Location loc_a = null;
+            distance = 0.0;
+            for (Location loc_b : itinerary) {
+                if (loc_a != null) {
+                    distance += loc_a.distanceFrom(loc_b);
+                }
+                loc_a = loc_b;
+            }
+        }
+
+        return distance;
+    }
+
+    public void merge(Trip other) {
+        throw new NullPointerException(null);
+    }
+
+
     public void addDestination(Location destination) {
-        itinerary.add(destination);
+        distance = null;
+        if (itinerary.size() == 0) {
+            itinerary.add(destination);
+            return;
+        }
+
+        Location loc_a = null;
+        Location fromLoc = itinerary.getLast();
+        Double minDistance = destination.distanceFrom(fromLoc);
+
+        for (Location loc_b : itinerary) {
+            if (loc_a != null) {
+                Double newSpanDistance = loc_a.distanceFrom(destination) + loc_b.distanceFrom(destination);
+                Double oldSpanDistance = loc_a.distanceFrom(loc_b);
+                Double spanDistanceDelta = newSpanDistance - oldSpanDistance;
+
+                if (spanDistanceDelta < minDistance) {
+                    minDistance = spanDistanceDelta;
+                    fromLoc = loc_a;
+                }
+            }
+            loc_a = loc_b;
+        }
+
+        if (fromLoc.equals(itinerary.getLast())) {
+            itinerary.add(destination);
+        } else {
+            itinerary.add(fromLoc, destination);
+        }
     }
 
     public void skipDestination(Location destination) {
+        distance = null;
         itinerary.remove(destination);
     }
 
     public void insertDetour(Location from, Location to) {
+        distance = null;
         itinerary.add(from, to);
     }
 

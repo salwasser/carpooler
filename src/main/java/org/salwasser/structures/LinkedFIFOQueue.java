@@ -17,6 +17,13 @@ public class LinkedFIFOQueue<T> implements Queue<T>{
     private Class elementValClass = null;
     private int size = 0;
 
+    public T getLast() {
+        if (tail == null) {
+            throw new NoSuchElementException("Trying to read an empty queue.");
+        }
+        return tail.val;
+    }
+
     public boolean isEmpty() {
         return size == 0;
     }

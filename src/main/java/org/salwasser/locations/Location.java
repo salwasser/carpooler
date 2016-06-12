@@ -14,6 +14,10 @@ public class Location {
         return geo;
     }
 
+    public Double distanceFrom(Location there) {
+        return geo.getDistance(there.asGeoCoordinate());
+    }
+
     @Override
     public String toString() {
         if (geo == null) {
