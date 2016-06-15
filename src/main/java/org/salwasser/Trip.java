@@ -10,7 +10,7 @@ import java.util.Iterator;
 /**
  * Created by Zac on 6/11/2016.
  */
-public class Trip implements Comparable<Trip> {
+public class Trip implements Comparable<Trip>, Iterable<Location> {
     private LinkedFIFOQueue<Location> itinerary;
     private Date startTime;
     private Double distance = null;
@@ -54,8 +54,14 @@ public class Trip implements Comparable<Trip> {
         return distance;
     }
 
+    public Iterator<Location> iterator() {
+        return itinerary.iterator();
+    }
+
     public void merge(Trip other) {
-        throw new NullPointerException(null);
+        for (Location otherLoc : other) {
+            this.addDestination(otherLoc);
+        }
     }
 
 

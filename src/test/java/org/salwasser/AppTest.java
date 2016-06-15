@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.salwasser.locations.GeoCoordinate;
 import org.salwasser.locations.Location;
+import org.salwasser.structures.SortableArrayList;
 
 import java.util.Date;
 
@@ -36,19 +37,42 @@ public class AppTest
      * Rigourous Test :-)
      */
     public void testApp() {
+
+        SortableArrayList<Integer> numberSorter = new SortableArrayList<Integer>();
+        for (int idx = 100; idx > 0; idx--) {
+            numberSorter.add(idx);
+        }
+
+        numberSorter.quickSort();
+        System.err.println(numberSorter);
+
         try {
             Trip testTrip = new Trip(new Date(System.currentTimeMillis()));
             testTrip.addDestination(new Location(new GeoCoordinate(0.0, 0.0)));
             testTrip.addDestination(new Location(new GeoCoordinate(1.0, 1.0)));
             testTrip.addDestination(new Location(new GeoCoordinate(3.0, 3.0)));
             testTrip.addDestination(new Location(new GeoCoordinate(4.0, 4.0)));
+            System.err.println(testTrip.toString());
+
             testTrip.insertDetour(new Location(new GeoCoordinate(1.0, 1.0)),
                                   new Location(new GeoCoordinate(2.0, 2.0)));
+            System.err.println(testTrip.toString());
+
             testTrip.addDestination(new Location(new GeoCoordinate(5.0, -1.0)));
+            System.err.println(testTrip.toString());
+
             testTrip.addDestination(new Location(new GeoCoordinate(5.0, -2.0)));
+            System.err.println(testTrip.toString());
+
             testTrip.skipDestination(new Location(new GeoCoordinate(0.0, 0.0)));
             testTrip.skipDestination(new Location(new GeoCoordinate(5.0, -2.0)));
             testTrip.skipDestination(new Location(new GeoCoordinate(4.0, 4.0)));
+            System.err.println(testTrip.toString());
+
+            testTrip.skipDestination(new Location(new GeoCoordinate(2.0, 2.0)));
+            testTrip.skipDestination(new Location(new GeoCoordinate(3.0, 3.0)));
+            testTrip.addDestination(new Location(new GeoCoordinate(5.0, 5.0)));
+            testTrip.addDestination(new Location(new GeoCoordinate(1.01, 1.01)));
 
             System.err.println(testTrip.toString());
         } catch (GeoCoordinate.BadGeoCoordinateException b) {
