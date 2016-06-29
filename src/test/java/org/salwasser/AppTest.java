@@ -38,14 +38,36 @@ public class AppTest
      */
     public void testApp() {
 
-        SortableArrayList<Integer> numberSorter = new SortableArrayList<Integer>();
+        SortableArrayList<Integer> numberSorter;
+
+        numberSorter = new SortableArrayList<Integer>();
         for (int idx = 100; idx > 0; idx--) {
             numberSorter.add(idx);
         }
-
         numberSorter.quickSort();
         System.err.println(numberSorter);
 
+        numberSorter = new SortableArrayList<Integer>();
+        for (int idx = 100; idx > 0; idx--) {
+            numberSorter.add(idx);
+        }
+        numberSorter.insertionSort();
+        System.err.println(numberSorter);
+
+        numberSorter = new SortableArrayList<Integer>();
+        for (int idx = 0; idx < 100; idx++) {
+            numberSorter.add(idx);
+        }
+        numberSorter.quickSort(true);
+        System.err.println(numberSorter);
+
+        numberSorter = new SortableArrayList<Integer>();
+        for (int idx = 0; idx < 100; idx++) {
+            numberSorter.add(idx);
+        }
+        numberSorter.insertionSort(true);
+        System.err.println(numberSorter);
+        
         try {
             Trip testTrip = new Trip(new Date(System.currentTimeMillis()));
             testTrip.addDestination(new Location(new GeoCoordinate(0.0, 0.0)));

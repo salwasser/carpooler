@@ -31,16 +31,12 @@ public class SortableArrayList<T extends Comparable> extends ArrayList<Comparabl
     }
 
     private void quickSort(int lhand, int rhand, int logicProduct) {
-        if (lhand == rhand) {
+        if (lhand + 1 >= rhand) {
             return;
         }
 
-        if (rhand == lhand + 1) {
-            if (get(lhand).compareTo(get(rhand)) * logicProduct > 0) {
-                Comparable tmp = get(lhand);
-                set(lhand, get(rhand));
-                set(rhand, tmp);
-            }
+        if (rhand - lhand < 10) {
+            insertionSort(lhand, rhand, logicProduct);
             return;
         }
 
@@ -53,9 +49,9 @@ public class SortableArrayList<T extends Comparable> extends ArrayList<Comparabl
         while (lhandReader < pivotReader ||
                rhandReader < rhand) {
             boolean lSwapNeeded = lhandReader < pivotReader &&
-                                  pivot.compareTo(get(lhandReader)) < 0;
+                                  pivot.compareTo(get(lhandReader)) * logicProduct < 0;
             boolean rSwapNeeded = rhandReader < rhand &&
-                                  pivot.compareTo(get(rhandReader)) > 0;
+                                  pivot.compareTo(get(rhandReader)) * logicProduct > 0;
             boolean incrementLhand = true;
 
             if (lSwapNeeded && !rSwapNeeded) {
@@ -87,5 +83,33 @@ public class SortableArrayList<T extends Comparable> extends ArrayList<Comparabl
     }
     public void quickSort() {
         quickSort(false);
+    }
+
+    public void insertionSort() {
+        insertionSort(false);
+    }
+    public void insertionSort(boolean descending) {
+        insertionSort(0, size(), descending?-1:1);
+    }
+
+    private void insertionSort(int start, int end, int logicProduct) {
+        int rhand = start + 1;
+
+        if (rhand >= end) {
+            return;
+        }
+
+
+        while (rhand < end) {
+            int lhand = rhand;
+            while (lhand > start &&
+                   get(lhand).compareTo(get(lhand - 1)) * logicProduct < 0) {
+                Comparable tmp = get(lhand);
+                set(lhand, get(lhand - 1));
+                set(lhand - 1, tmp);
+                lhand--;
+            }
+            rhand++;
+        }
     }
 }
