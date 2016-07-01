@@ -22,9 +22,33 @@ public class BinarySearchTree<T extends Comparable> {
             this.greaterThan = null;
         }
 
+        @Override
+        public String toString() {
+            String lt = (lessThan == null)?"Null":"" + lessThan.hashCode();
+            String gt = (greaterThan == null)?"Null":"" + greaterThan.hashCode();
+            return "(" + height + ": " + val + " [" + lt + ", " + gt + "])";
+        }
+
+        public String debugString(int tabs) {
+            String indent = "    ";
+            for (int idx = 0; idx < tabs; idx++) {
+                indent += "    ";
+            }
+            String lt = "\n" + indent + ((lessThan == null)?"Null":"" + lessThan.debugString(tabs + 1));
+            String gt = "\n" + indent + ((greaterThan == null)?"Null":"" + greaterThan.debugString(tabs + 1));
+            return "(" + height + ": " + val + " [" + lt + ", " + gt + "])";
+        }
+
     }
 
     private TreeNode root = null;
+
+    public String debugString() {
+        if (root == null) {
+            return "Null.";
+        }
+        return root.debugString(0);
+    }
 
     private void rebalanceTowardGreaterThan(TreeNode node, TreeNode parentNode, boolean childGTParent) {
         if (node.lessThan == null) {
@@ -37,9 +61,7 @@ public class BinarySearchTree<T extends Comparable> {
             parentNode.greaterThan = node.lessThan;
         }
 
-        if (node.lessThan.greaterThan != null) {
-            node.lessThan = node.lessThan.greaterThan;
-        }
+        node.lessThan = node.lessThan.greaterThan;
 
         if (!childGTParent) {
             parentNode.lessThan.greaterThan = node;
@@ -70,9 +92,7 @@ public class BinarySearchTree<T extends Comparable> {
             parentNode.greaterThan = node.greaterThan;
         }
 
-        if (node.greaterThan.lessThan != null) {
-            node.greaterThan = node.greaterThan.lessThan;
-        }
+        node.greaterThan = node.greaterThan.lessThan;
 
         if (!childGTParent) {
             parentNode.lessThan.lessThan = node;
@@ -92,15 +112,20 @@ public class BinarySearchTree<T extends Comparable> {
     }
 
     private void checkBalance(TreeNode node, TreeNode parentNode, boolean childGTParent) {
+        int gtHeight = -1;
+        int ltHeight = -1;
+
         if (node.lessThan != null) {
             checkBalance(node.lessThan, node, false);
+            ltHeight = node.lessThan.height;
         }
         if (node.greaterThan != null) {
             checkBalance(node.greaterThan, node, true);
+            gtHeight = node.greaterThan.height;
         }
-        if (node.greaterThan.height - node.lessThan.height > 1) {
+        if (gtHeight - ltHeight > 1) {
             rebalanceTowardLessThan(node, parentNode, childGTParent);
-        } else if (node.lessThan.height - node.greaterThan.height > 1) {
+        } else if (ltHeight - gtHeight > 1) {
             rebalanceTowardGreaterThan(node, parentNode, childGTParent);
         }
     }
@@ -325,7 +350,10 @@ public class BinarySearchTree<T extends Comparable> {
 
     private void bfTraverse(List<T> toAddto, List<Integer> offsets, TreeNode node) {
         int idx = offsets.size();
-        int totalOffset = 2 ^ (offsets.size() - 1);
+        int totalOffset = 0;
+        for (int idy = 0; idy < offsets.size(); idy++) {
+            totalOffset += (int)Math.pow(2.0, (double)idy);
+        }
 
         for (Integer offset : offsets) {
             totalOffset += idx * offset;
@@ -348,12 +376,19 @@ public class BinarySearchTree<T extends Comparable> {
 
     @Override
     public String toString() {
-        long arraySize = 2 ^ root.height;
+        long arraySize = 0;
+        for (int idx = 0; idx <= root.height; idx++) {
+            arraySize += (long)Math.pow(2.0, (double)idx);
+        }
+
         if (arraySize > Integer.MAX_VALUE) {
             return "Tree is way too big to perform breadth traversal.";
         }
         ArrayList<T> toPrint = new ArrayList<T>();
         toPrint.ensureCapacity((int)arraySize);
+        for (int idx = 0; idx < arraySize; idx++) {
+            toPrint.add(null);
+        }
         toPrint.set(0, root.val);
         if (root.lessThan != null) {
             List<Integer> offsets = new ArrayList<Integer>();
