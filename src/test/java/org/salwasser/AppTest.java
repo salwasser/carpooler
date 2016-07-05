@@ -1,10 +1,12 @@
 package org.salwasser;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.salwasser.locations.GeoCoordinate;
 import org.salwasser.locations.Location;
+import org.salwasser.structures.BinarySearchTree;
 import org.salwasser.structures.SortableArrayList;
 
 import java.util.Date;
@@ -37,6 +39,82 @@ public class AppTest
      * Rigourous Test :-)
      */
     public void testApp() {
+        JumpingOnPoints jp = new JumpingOnPoints();
+        {
+            int[] params = {0, 0, 5, 100, 0, 0, 5, 100, 0, 0, 10, 100, 1, 1, 0, 100};
+            long retval = 150000000000000l;
+            assertTrue(jp.sumOfDistances(2, 0, params) == retval);
+        }
+
+        {
+            int[] params = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+            long retval = 18;
+            assertTrue(jp.sumOfDistances(3, 1, params) == retval);
+        }
+
+        {
+            int[] params = {0, 1, 1, 100, 0, 1, 1, 100, 1, 1, 0, 100, 0, 0, 1, 2};
+            long retval = 6;
+            assertTrue(jp.sumOfDistances(4, 0, params) == retval);
+        }
+
+        {
+            int[] params = {0, 1, 1, 1000000000, 0, 1, 1, 1000000000, 1, 1, 0, 1000000000, 999999999, 1, 0, 1000000000};
+            long retval = 1799969998200030000l;
+            assertTrue(jp.sumOfDistances(60000, 0, params) == retval);
+        }
+
+        {
+            int[] params = {0, 1, 5, 15, 0, 1, 5, 10, 0, 0, 0, 1,1,1,1,3};
+            long retval = 8;
+            assertTrue(jp.sumOfDistances(6, 0, params) == retval);
+        }
+
+        {
+            int[] params = {11111, 11111, 111111, 11111111, 12121, 12111, 13131, 11111111, 13, 14444, 44312, 222211, 13131, 328655, 11373, 999999993};
+            long retval = 738940004832l;
+            assertTrue(jp.sumOfDistances(1000, 286, params) == retval);
+        }
+
+        BinarySearchTree<Customer> bst = new BinarySearchTree<Customer>();
+
+        bst.insert(new Customer("Zac", "Salwasser"));
+        bst.insert(new Customer("Rebekah", "Splaine"));
+        bst.insert(new Customer("Niko", "Salwasser"));
+        bst.insert(new Customer("Calvin", "Salwasser"));
+        bst.insert(new Customer("William", "Levine"));
+        bst.insert(new Customer("Chouteau", "Levine"));
+        System.err.println(bst.debugString());
+        System.err.println("* * *");
+        System.err.println(bst.toString());
+        System.err.println("* * *");
+        System.err.println(bst.asSortedList());
+        System.err.println("* * *");
+        System.err.println("Contains Calvin Salwasser? " + bst.contains(new Customer("Calvin", "Salwasser")));
+        System.err.println("Contains Rebekah Splaine? " + bst.contains(new Customer("Rebekah", "Splaine")));
+        System.err.println("Contains Mark Salwasser? " + bst.contains(new Customer("Mark", "Salwasser")));
+
+        bst.remove(new Customer("Calvin", "Salwasser"));
+        System.err.println(bst.debugString());
+        System.err.println("* * *");
+        System.err.println(bst.toString());
+        System.err.println("* * *");
+        System.err.println(bst.asSortedList());
+        System.err.println("* * *");
+        System.err.println("Contains Calvin Salwasser? " + bst.contains(new Customer("Calvin", "Salwasser")));
+
+        bst.remove(new Customer("Mark", "Salwasser"));
+        bst.remove(new Customer("Chouteau", "Levine"));
+        System.err.println(bst.debugString());
+        System.err.println("* * *");
+        System.err.println(bst.toString());
+        System.err.println("* * *");
+        System.err.println(bst.asSortedList());
+        System.err.println("* * *");
+        System.err.println("Contains Calvin Salwasser? " + bst.contains(new Customer("Calvin", "Salwasser")));
+        System.err.println("Contains Chouteau Levine? " + bst.contains(new Customer("Chouteau", "Levine")));
+        System.err.println("Contains Rebekah Splaine? " + bst.contains(new Customer("Rebekah", "Splaine")));
+        System.err.println("Contains Mark Salwasser? " + bst.contains(new Customer("Mark", "Salwasser")));
 
         SortableArrayList<Integer> numberSorter;
 
@@ -100,6 +178,7 @@ public class AppTest
         } catch (GeoCoordinate.BadGeoCoordinateException b) {
             throw new RuntimeException(b);
         }
-        assertTrue( false );
+
+        assertTrue(true);
     }
 }
