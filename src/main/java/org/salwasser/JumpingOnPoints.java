@@ -1,7 +1,6 @@
 package org.salwasser;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class JumpingOnPoints {
     private int X[];
@@ -41,7 +40,16 @@ public class JumpingOnPoints {
         }
     }
 
-    private long getMinDistance(int from, int to) {
+    private class PathTooLongException extends Exception {
+    }
+
+    private long getMinDistance(int from, int to, Set<Integer> path) throws PathTooLongException {
+        //System.err.println(indent + "F: " + from + ", T: " + to + ", P: " + path);
+        //if (path.size() > 128) {
+        //    throw new PathTooLongException();
+        //}
+
+        path.add(from);
         long disconnected = (long)(1.5 * Math.pow(10.0, 14.0));
 
         if (!connections.containsKey(from)) {
@@ -49,11 +57,12 @@ public class JumpingOnPoints {
         }
 
         if (connections.get(from).containsKey(to)) {
+            //System.err.println("Returning " + connections.get(from).get(to));
             return connections.get(from).get(to);
         }
 
         for (int index = 0; index < X.length; index++) {
-            if (from != index && adjacent(from, index)) {
+            if (!path.contains(index) && adjacent(from, index)) {
                 if (connections.get(from).containsKey(index)) {
                     int adjacentCost = adjacentCost(from, index);
                     if (adjacentCost < connections.get(from).get(index)) {
@@ -65,33 +74,71 @@ public class JumpingOnPoints {
             }
         }
 
+        //System.err.println(indent + "Known connections: " + connections.get(from));
+
+        Map<Integer, Long> newWaypoints = new HashMap<Integer, Long>();
         for (int possibleWaypoint : connections.get(from).keySet()) {
-            if (!connections.get(from).containsKey(to) ||
-                connections.get(from).get(possibleWaypoint) < connections.get(from).get(to)) {
-                long distance = Math.min(connections.get(from).get(possibleWaypoint) +
-                                         getMinDistance(possibleWaypoint, to),
-                                         disconnected);
-                if (connections.get(from).containsKey(to)) {
-                    if (distance < connections.get(from).get(to)) {
-                        connections.get(from).put(to, distance);
+            if (!path.contains(possibleWaypoint)) {
+                if (!connections.get(from).containsKey(to) ||
+                        connections.get(from).get(possibleWaypoint) < connections.get(from).get(to)) {
+                    long distance = Math.min(connections.get(from).get(possibleWaypoint) +
+                                    getMinDistance(possibleWaypoint, to, path),
+                            disconnected);
+                    path.remove(possibleWaypoint);
+                    if (!newWaypoints.containsKey(to) ||
+                        distance < newWaypoints.get(to)) {
+                            newWaypoints.put(to, distance);
                     }
-                } else {
-                    connections.get(from).put(to, distance);
                 }
             }
         }
 
-        return connections.get(from).get(to);
+        //System.err.println(indent + "New waypoints: " + newWaypoints);
+        for (Integer newWaypointIndex : newWaypoints.keySet()) {
+            if (!connections.get(from).containsKey(newWaypointIndex) ||
+                newWaypoints.get(newWaypointIndex) < connections.get(from).get(newWaypointIndex)) {
+                connections.get(from).put(newWaypointIndex, newWaypoints.get(newWaypointIndex));
+            }
+        }
+        //System.err.println(indent + "Known connections: " + connections.get(from));
+
+        if (connections.get(from).keySet().isEmpty()) {
+            connections.get(from).put(to, disconnected);
+        }
+
+        long retval = connections.get(from).get(to);
+        //System.err.println(indent + "Returning " + retval);
+        return retval;
     }
 
     public long sumOfDistances(int N, int S, int[] params) {
         graphGen(N, params);
         long retval = 0;
+        Set<Integer> tryAgain = new HashSet<Integer>();
         for (int i = 0; i < N; i++) {
             if (i != S) {
-                retval += getMinDistance(S, i);
+                tryAgain.add(i);
             }
         }
+        long j = 0;
+        while (!tryAgain.isEmpty()) {
+            Set<Integer> toTryAgain = new HashSet<Integer>(tryAgain);
+            System.err.println("Computing " + toTryAgain.size() + " values on this pass.");
+            for (int i : toTryAgain) {
+                try {
+                    long subDistance = getMinDistance(S, i, new HashSet<Integer>());
+                    retval += subDistance;
+                    tryAgain.remove(i);
+                } catch (PathTooLongException p) {
+                    tryAgain.add(i);
+                }
+                j++;
+                if (j % 100 == 0) {
+                    System.err.println("Partial progress: " + retval);
+                }
+            }
+        }
+
         return retval;
     }
 }

@@ -39,41 +39,52 @@ public class AppTest
      * Rigourous Test :-)
      */
     public void testApp() {
-        JumpingOnPoints jp = new JumpingOnPoints();
         {
+            JumpingOnPoints jp = new JumpingOnPoints();
             int[] params = {0, 0, 5, 100, 0, 0, 5, 100, 0, 0, 10, 100, 1, 1, 0, 100};
             long retval = 150000000000000l;
             assertTrue(jp.sumOfDistances(2, 0, params) == retval);
+            System.err.println("Passed - (" + retval + ")");
         }
 
         {
+            JumpingOnPoints jp = new JumpingOnPoints();
             int[] params = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
             long retval = 18;
             assertTrue(jp.sumOfDistances(3, 1, params) == retval);
+            System.err.println("Passed - (" + retval + ")");
         }
 
         {
+            JumpingOnPoints jp = new JumpingOnPoints();
             int[] params = {0, 1, 1, 100, 0, 1, 1, 100, 1, 1, 0, 100, 0, 0, 1, 2};
             long retval = 6;
             assertTrue(jp.sumOfDistances(4, 0, params) == retval);
+            System.err.println("Passed - (" + retval + ")");
         }
 
         {
-            int[] params = {0, 1, 1, 1000000000, 0, 1, 1, 1000000000, 1, 1, 0, 1000000000, 999999999, 1, 0, 1000000000};
-            long retval = 1799969998200030000l;
-            assertTrue(jp.sumOfDistances(60000, 0, params) == retval);
-        }
-
-        {
+            JumpingOnPoints jp = new JumpingOnPoints();
             int[] params = {0, 1, 5, 15, 0, 1, 5, 10, 0, 0, 0, 1,1,1,1,3};
             long retval = 8;
             assertTrue(jp.sumOfDistances(6, 0, params) == retval);
+            System.err.println("Passed - (" + retval + ")");
         }
 
         {
+            JumpingOnPoints jp = new JumpingOnPoints();
+            int[] params = {0, 1, 1, 1000000000, 0, 1, 1, 1000000000, 1, 1, 0, 1000000000, 999999999, 1, 0, 1000000000};
+            long retval = 1799969998200030000l;
+            assertTrue(jp.sumOfDistances(60000, 0, params) == retval);
+            System.err.println("Passed - (" + retval + ")");
+        }
+
+        {
+            JumpingOnPoints jp = new JumpingOnPoints();
             int[] params = {11111, 11111, 111111, 11111111, 12121, 12111, 13131, 11111111, 13, 14444, 44312, 222211, 13131, 328655, 11373, 999999993};
             long retval = 738940004832l;
             assertTrue(jp.sumOfDistances(1000, 286, params) == retval);
+            System.err.println("Passed - (" + retval + ")");
         }
 
         BinarySearchTree<Customer> bst = new BinarySearchTree<Customer>();
