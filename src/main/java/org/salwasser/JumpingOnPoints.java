@@ -8,6 +8,8 @@ public class JumpingOnPoints {
     private int P[];
     private int T[];
 
+    private Map<Integer, Set<Integer>> singlePassPoints = new HashMap<Integer, Set<Integer>>();
+
     private Map<Integer, Map<Integer, Long>> connections = new HashMap<Integer, Map<Integer, Long>>();
 
     private boolean adjacent(int from, int to) {
@@ -60,6 +62,14 @@ public class JumpingOnPoints {
             //System.err.println("Returning " + connections.get(from).get(to));
             return connections.get(from).get(to);
         }
+
+        if (!singlePassPoints.containsKey(from)) {
+            singlePassPoints.put(from, new HashSet<Integer>());
+        }
+        if (singlePassPoints.get(from).contains(to)) {
+            System.err.println("Called more than once with the same parameters, but resulted in non-trivial branching.");
+        }
+        singlePassPoints.get(from).add(to);
 
         for (int index = 0; index < X.length; index++) {
             if (!path.contains(index) && adjacent(from, index)) {
@@ -123,7 +133,7 @@ public class JumpingOnPoints {
         long j = 0;
         while (!tryAgain.isEmpty()) {
             Set<Integer> toTryAgain = new HashSet<Integer>(tryAgain);
-            System.err.println("Computing " + toTryAgain.size() + " values on this pass.");
+            //System.err.println("Computing " + toTryAgain.size() + " values on this pass.");
             for (int i : toTryAgain) {
                 try {
                     long subDistance = getMinDistance(S, i, new HashSet<Integer>());
@@ -133,9 +143,11 @@ public class JumpingOnPoints {
                     tryAgain.add(i);
                 }
                 j++;
+                /*
                 if (j % 100 == 0) {
                     System.err.println("Partial progress: " + retval);
                 }
+                */
             }
         }
 
